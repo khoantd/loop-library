@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Loop Library</title>
+  <subtitle>Practical AI agent workflows for engineering, research, editorial work, evaluation, and operations.</subtitle>
+  <id>https://signals.forwardfuture.ai/loop-library/</id>
+  <link href="https://signals.forwardfuture.ai/loop-library/" />
+  <link href="https://signals.forwardfuture.ai/loop-library/feed.xml" rel="self" type="application/atom+xml" />
+  <updated>2026-06-13T00:00:00-07:00</updated>
+  <author>
+    <name>Forward Future</name>
+    <uri>https://forwardfuture.ai/</uri>
+  </author>
+  <entry>
+    <title>The overnight docs sweep</title>
+    <id>https://signals.forwardfuture.ai/loop-library/loops/overnight-docs-sweep/</id>
+    <link href="https://signals.forwardfuture.ai/loop-library/loops/overnight-docs-sweep/" />
+    <published>2026-06-12T00:00:00-07:00</published>
+    <updated>2026-06-12T00:00:00-07:00</updated>
+    <author>
+      <name>Matthew Berman</name>
+    </author>
+    <summary>A scheduled AI coding-agent workflow for comparing documentation with the current codebase, fixing drift, and opening a reviewable pull request.</summary>
+  </entry>
+  <entry>
+    <title>The architecture satisfaction loop</title>
+    <id>https://signals.forwardfuture.ai/loop-library/loops/architecture-satisfaction-loop/</id>
+    <link href="https://signals.forwardfuture.ai/loop-library/loops/architecture-satisfaction-loop/" />
+    <published>2026-06-12T00:00:00-07:00</published>
+    <updated>2026-06-12T00:00:00-07:00</updated>
+    <author>
+      <name>Peter Steinberger</name>
+    </author>
+    <summary>A bounded refactoring workflow that live-tests the system, runs an independent review, commits checkpoints, and records progress.</summary>
+  </entry>
+  <entry>
+    <title>The sub-50 ms page-load loop</title>
+    <id>https://signals.forwardfuture.ai/loop-library/loops/sub-50ms-page-load-loop/</id>
+    <link href="https://signals.forwardfuture.ai/loop-library/loops/sub-50ms-page-load-loop/" />
+    <published>2026-06-12T00:00:00-07:00</published>
+    <updated>2026-06-12T00:00:00-07:00</updated>
+    <author>
+      <name>Matthew Berman</name>
+    </author>
+    <summary>A performance optimization workflow for coding agents that uses one repeatable benchmark and stops only when every target page meets the threshold.</summary>
+  </entry>
+  <entry>
+    <title>The production error sweep</title>
+    <id>https://signals.forwardfuture.ai/loop-library/loops/production-error-sweep/</id>
+    <link href="https://signals.forwardfuture.ai/loop-library/loops/production-error-sweep/" />
+    <published>2026-06-12T00:00:00-07:00</published>
+    <updated>2026-06-12T00:00:00-07:00</updated>
+    <author>
+      <name>Matthew Berman</name>
+    </author>
+    <summary>A scheduled production-log workflow that traces actionable errors to root causes, verifies fixes, opens a pull request, and reports the result.</summary>
+  </entry>
+  <entry>
+    <title>The 100% test coverage loop</title>
+    <id>https://signals.forwardfuture.ai/loop-library/loops/100-percent-test-coverage-loop/</id>
+    <link href="https://signals.forwardfuture.ai/loop-library/loops/100-percent-test-coverage-loop/" />
+    <published>2026-06-13T00:00:00-07:00</published>
+    <updated>2026-06-13T00:00:00-07:00</updated>
+    <author>
+      <name>Matthew Berman</name>
+    </author>
+    <summary>A goal-based coding-agent workflow that identifies uncovered behavior, adds meaningful tests, and stops when the full suite passes at 100% coverage.</summary>
+  </entry>
+  <entry>
+    <title>The SEO/GEO visibility loop</title>
+    <id>https://signals.forwardfuture.ai/loop-library/loops/seo-geo-visibility-loop/</id>
+    <link href="https://signals.forwardfuture.ai/loop-library/loops/seo-geo-visibility-loop/" />
+    <published>2026-06-13T00:00:00-07:00</published>
+    <updated>2026-06-13T00:00:00-07:00</updated>
+    <author>
+      <name>Matthew Berman</name>
+    </author>
+    <summary>A repeatable search visibility workflow that fixes the highest-impact crawl, indexation, page-intent, citation, and answer-readiness gaps first.</summary>
+  </entry>
+  <entry>
+    <title>The exhaustive logging coverage loop</title>
+    <id>https://signals.forwardfuture.ai/loop-library/loops/exhaustive-logging-coverage-loop/</id>
+    <link href="https://signals.forwardfuture.ai/loop-library/loops/exhaustive-logging-coverage-loop/" />
+    <published>2026-06-13T00:00:00-07:00</published>
+    <updated>2026-06-13T00:00:00-07:00</updated>
+    <author>
+      <name>Matthew Berman</name>
+    </author>
+    <summary>A structured logging and observability workflow that maps critical paths, fills coverage gaps, verifies emitted events, and protects sensitive data.</summary>
+  </entry>
+  <entry>
+    <title>The nightly changelog sweep</title>
+    <id>https://signals.forwardfuture.ai/loop-library/loops/nightly-changelog-sweep/</id>
+    <link href="https://signals.forwardfuture.ai/loop-library/loops/nightly-changelog-sweep/" />
+    <published>2026-06-13T00:00:00-07:00</published>
+    <updated>2026-06-13T00:00:00-07:00</updated>
+    <author>
+      <name>Matthew Berman</name>
+    </author>
+    <summary>A scheduled coding-agent workflow that reconciles commits, merged pull requests, deployments, and repository changes with the project changelog.</summary>
+  </entry>
+</feed>

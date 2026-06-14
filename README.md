@@ -13,10 +13,34 @@ Then open `http://localhost:4173`.
 ## Checks
 
 ```bash
+node scripts/build-loop-pages.mjs
 node --check site/script.js
 node scripts/check.mjs
 python3 -m json.tool site/.herenow/data.json >/dev/null
 ```
+
+## Loop pages and search discovery
+
+The searchable table stays in `site/index.html`. Canonical loop metadata and
+detail-page content live in `scripts/loop-data.mjs`.
+
+When adding or editing a loop:
+
+1. Update the table row and visible count in `site/index.html`.
+2. Update the matching entry in `scripts/loop-data.mjs`.
+3. Run `node scripts/build-loop-pages.mjs`.
+4. Run the checks above.
+
+The generator writes:
+
+- `site/loops/<slug>/index.html`
+- `site/sitemap.xml`
+- `site/feed.xml`
+
+After production deployment, submit
+`https://signals.forwardfuture.ai/loop-library/sitemap.xml` in Google Search
+Console and Bing Webmaster Tools. Verify that the custom domain's root
+`robots.txt` continues to allow Googlebot, Bingbot, and `OAI-SearchBot`.
 
 ## Submission safety
 

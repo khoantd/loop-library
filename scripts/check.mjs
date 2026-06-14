@@ -3,27 +3,84 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const site = path.join(root, "site");
+import { loops, site as siteMeta } from "./loop-data.mjs";
 
-const [html, css, script, dataSource] = await Promise.all([
-  readFile(path.join(site, "index.html"), "utf8"),
-  readFile(path.join(site, "styles.css"), "utf8"),
-  readFile(path.join(site, "script.js"), "utf8"),
-  readFile(path.join(site, ".herenow", "data.json"), "utf8"),
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const siteRoot = path.join(root, "site");
+
+const [html, css, script, dataSource, sitemap, feed, loopPages] =
+  await Promise.all([
+    readFile(path.join(siteRoot, "index.html"), "utf8"),
+    readFile(path.join(siteRoot, "styles.css"), "utf8"),
+    readFile(path.join(siteRoot, "script.js"), "utf8"),
+    readFile(path.join(siteRoot, ".herenow", "data.json"), "utf8"),
+    readFile(path.join(siteRoot, "sitemap.xml"), "utf8"),
+    readFile(path.join(siteRoot, "feed.xml"), "utf8"),
+    Promise.all(
+      loops.map((loop) =>
+        readFile(
+          path.join(siteRoot, "loops", loop.slug, "index.html"),
+          "utf8",
+        ),
+      ),
+    ),
 ]);
 
 const dataManifest = JSON.parse(dataSource);
 const suggestions = dataManifest.collections?.suggestions;
+const normalizedHtml = html.replace(/\s+/g, " ");
+const structuredDataMatch = html.match(
+  /<script type="application\/ld\+json">\s*([\s\S]*?)\s*<\/script>/,
+);
 
-assert(html.includes("The overnight docs sweep"));
-assert(html.includes("The architecture satisfaction loop"));
-assert(html.includes("The sub-50 ms page-load loop"));
-assert(html.includes("The production error sweep"));
-assert(html.includes("The 100% test coverage loop"));
-assert(html.includes("The SEO/GEO visibility loop"));
-assert(html.includes("The exhaustive logging coverage loop"));
-assert(html.includes("The nightly changelog sweep"));
+assert(structuredDataMatch);
+const structuredData = JSON.parse(structuredDataMatch[1]);
+const collection = structuredData["@graph"].find(
+  (item) => item["@type"] === "CollectionPage",
+);
+const slugs = new Set(loops.map((loop) => loop.slug));
+
+assert.equal(collection.mainEntity.numberOfItems, loops.length);
+assert.equal(collection.mainEntity.itemListElement.length, loops.length);
+assert.equal(slugs.size, loops.length);
+assert.equal(new Set(loops.map((loop) => loop.number)).size, loops.length);
+assert.equal(new Set(loops.map((loop) => loop.seoTitle)).size, loops.length);
+
+for (const [index, loop] of loops.entries()) {
+  const url = `${siteMeta.baseUrl}loops/${loop.slug}/`;
+  const page = loopPages[index];
+  const listItem = collection.mainEntity.itemListElement[index];
+  const pageStructuredDataMatch = page.match(
+    /<script type="application\/ld\+json">\s*([\s\S]*?)\s*<\/script>/,
+  );
+
+  assert.equal(listItem.position, index + 1);
+  assert.equal(listItem.name, loop.title);
+  assert.equal(listItem.url, url);
+  assert(loop.related.every((relatedSlug) => slugs.has(relatedSlug)));
+  assert(html.includes(loop.title));
+  assert(normalizedHtml.includes(loop.prompt));
+  assert(html.includes(`href="./loops/${loop.slug}/"`));
+  assert(page.includes(`<title>${loop.seoTitle}</title>`));
+  assert(page.includes(`<link rel="canonical" href="${url}"`));
+  assert(page.includes(loop.description));
+  assert(page.includes(loop.prompt));
+  assert(page.includes('data-copy-root'));
+  assert(pageStructuredDataMatch);
+
+  const pageStructuredData = JSON.parse(pageStructuredDataMatch[1]);
+  const article = pageStructuredData["@graph"].find(
+    (item) => item["@type"] === "Article",
+  );
+
+  assert.equal(article.url, url);
+  assert.equal(article.headline, loop.title);
+  assert.equal(article.dateModified, loop.modified);
+  assert(sitemap.includes(`<loc>${url}</loc>`));
+  assert(sitemap.includes(`<lastmod>${loop.modified}</lastmod>`));
+  assert(feed.includes(`<id>${url}</id>`));
+}
+
 assert(html.includes("Continue until every page loads in under 50 ms."));
 assert(html.includes("If no actionable errors are"));
 assert(html.includes("Add tests until we have 100% test coverage."));
@@ -32,12 +89,17 @@ assert(html.includes("The logging coverage matrix has no unexplained gaps."));
 assert(html.includes("Every change from the previous 24 hours is accounted for."));
 assert(html.includes("Matthew Berman"));
 assert(html.includes("Peter Steinberger"));
-assert.equal((html.match(/class="loop-row"/g) || []).length, 8);
+assert.equal((html.match(/class="loop-row"/g) || []).length, loops.length);
+assert.equal((html.match(/data-copy-root/g) || []).length, loops.length);
 assert(html.includes('class="loop-table"'));
 assert(!html.includes('class="loop-diagram"'));
-assert(html.includes("Showing 8 loops"));
-assert(html.includes("./styles.css?v=20260613-loop-setup"));
-assert(html.includes("./script.js?v=20260612-dark-mode"));
+assert(html.includes(`Showing ${loops.length} loops`));
+assert(html.includes("./styles.css?v=20260613-seo"));
+assert(html.includes("./script.js?v=20260613-seo"));
+assert(html.includes("Repeatable AI Agent Workflows"));
+assert(html.includes('rel="sitemap"'));
+assert(html.includes('type="application/ld+json"'));
+assert(html.includes('class="about-library"'));
 assert(html.includes('id="theme-toggle"'));
 assert(html.includes('document.documentElement.dataset.theme = theme'));
 assert(html.includes('"loop-library-theme"'));
@@ -60,6 +122,9 @@ assert(css.includes("--charcoal: #101010"));
 assert(css.includes(".tips-section"));
 assert(css.includes(".loop-table"));
 assert(css.includes(".setup-grid"));
+assert(css.includes(".detail-layout"));
+assert(css.includes(".related-loop-link"));
+assert(css.includes(".about-library"));
 assert(css.includes(':root[data-theme="dark"]'));
 assert(css.includes(".theme-toggle"));
 assert(!css.includes("box-shadow"));
@@ -69,7 +134,10 @@ assert(script.includes('searchInput.addEventListener("input", updateLibrary)'));
 assert(script.includes('searchInput.addEventListener("search", updateLibrary)'));
 assert(script.includes('themeToggle.addEventListener("click"'));
 assert(script.includes("window.localStorage.setItem(THEME_STORAGE_KEY, theme)"));
+assert(script.includes('button.closest("[data-copy-root]")'));
 assert(!script.includes("innerHTML"));
+assert(sitemap.includes(`<loc>${siteMeta.baseUrl}</loc>`));
+assert(feed.includes(`<id>${siteMeta.baseUrl}</id>`));
 
 assert.equal(suggestions.access.read, "owner");
 assert.equal(suggestions.access.insert, "public");

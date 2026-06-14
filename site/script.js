@@ -14,12 +14,18 @@ function readStoredTheme() {
 function applyTheme(theme, persist = false) {
   const isDark = theme === "dark";
   document.documentElement.dataset.theme = isDark ? "dark" : "light";
-  themeToggle.setAttribute("aria-pressed", String(isDark));
-  themeToggle.setAttribute(
-    "aria-label",
-    `Switch to ${isDark ? "light" : "dark"} mode`,
-  );
-  themeColor.setAttribute("content", isDark ? "#101010" : "#faf8f7");
+
+  if (themeToggle) {
+    themeToggle.setAttribute("aria-pressed", String(isDark));
+    themeToggle.setAttribute(
+      "aria-label",
+      `Switch to ${isDark ? "light" : "dark"} mode`,
+    );
+  }
+
+  if (themeColor) {
+    themeColor.setAttribute("content", isDark ? "#101010" : "#faf8f7");
+  }
 
   if (persist) {
     try {
@@ -34,11 +40,13 @@ applyTheme(
   document.documentElement.dataset.theme === "dark" ? "dark" : "light",
 );
 
-themeToggle.addEventListener("click", () => {
-  const nextTheme =
-    document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-  applyTheme(nextTheme, true);
-});
+if (themeToggle) {
+  themeToggle.addEventListener("click", () => {
+    const nextTheme =
+      document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    applyTheme(nextTheme, true);
+  });
+}
 
 themeMedia.addEventListener("change", (event) => {
   if (!readStoredTheme()) {
@@ -61,6 +69,10 @@ function normalize(value) {
 }
 
 function updateLibrary() {
+  if (!searchInput || !resultsCount || !emptyState) {
+    return;
+  }
+
   const query = normalize(searchInput.value);
   let visibleCount = 0;
 
@@ -84,8 +96,10 @@ function updateLibrary() {
   emptyState.hidden = visibleCount !== 0;
 }
 
-searchInput.addEventListener("input", updateLibrary);
-searchInput.addEventListener("search", updateLibrary);
+if (searchInput) {
+  searchInput.addEventListener("input", updateLibrary);
+  searchInput.addEventListener("search", updateLibrary);
+}
 
 filterButtons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -111,6 +125,10 @@ filterButtons.forEach((button) => {
 updateLibrary();
 
 function showToast(message) {
+  if (!toast) {
+    return;
+  }
+
   window.clearTimeout(toastTimer);
   toast.textContent = message;
   toast.classList.add("is-visible");
@@ -121,8 +139,12 @@ function showToast(message) {
 
 async function copyText(text) {
   if (navigator.clipboard && window.isSecureContext) {
-    await navigator.clipboard.writeText(text);
-    return;
+    try {
+      await navigator.clipboard.writeText(text);
+      return;
+    } catch {
+      // Fall through to the selection-based copy path.
+    }
   }
 
   const textArea = document.createElement("textarea");
@@ -132,15 +154,23 @@ async function copyText(text) {
   textArea.style.opacity = "0";
   document.body.append(textArea);
   textArea.select();
-  document.execCommand("copy");
+  const copied = document.execCommand("copy");
   textArea.remove();
+
+  if (!copied) {
+    throw new Error("Copy is unavailable.");
+  }
 }
 
 document.querySelectorAll(".copy-button").forEach((button) => {
   button.addEventListener("click", async () => {
-    const row = button.closest(".loop-row");
-    const prompt = row.querySelector("[data-prompt]").textContent.trim();
+    const copyRoot = button.closest("[data-copy-root]");
+    const prompt = copyRoot?.querySelector("[data-prompt]")?.textContent.trim();
     const label = button.querySelector("span");
+
+    if (!prompt || !label) {
+      return;
+    }
 
     try {
       await copyText(prompt.replace(/\s+/g, " "));
@@ -174,8 +204,8 @@ document.querySelectorAll("textarea[maxlength]").forEach((textarea) => {
 
 const form = document.querySelector("#loop-form");
 const formStatus = document.querySelector("#form-status");
-const submitButton = form.querySelector(".submit-button");
-const submitButtonLabel = submitButton.querySelector("span");
+const submitButton = form?.querySelector(".submit-button");
+const submitButtonLabel = submitButton?.querySelector("span");
 
 let formStartedAt = performance.now();
 let idempotencyKey = makeIdempotencyKey();
@@ -189,6 +219,10 @@ function makeIdempotencyKey() {
 }
 
 function setFormStatus(message, kind = "") {
+  if (!formStatus) {
+    return;
+  }
+
   formStatus.textContent = message;
   formStatus.classList.toggle("is-success", kind === "success");
   formStatus.classList.toggle("is-error", kind === "error");
@@ -199,107 +233,109 @@ function optionalValue(formData, name) {
   return value || undefined;
 }
 
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  setFormStatus("");
+if (form && submitButton && submitButtonLabel) {
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    setFormStatus("");
 
-  if (!form.checkValidity()) {
-    form.reportValidity();
-    setFormStatus("Complete the required fields before submitting.", "error");
-    return;
-  }
-
-  const formData = new FormData(form);
-  const honeypot = String(formData.get("company") || "").trim();
-
-  if (honeypot) {
-    form.reset();
-    setFormStatus("Thanks. Your suggestion is in review.", "success");
-    return;
-  }
-
-  if (performance.now() - formStartedAt < 1200) {
-    setFormStatus(
-      "Take a moment to review the loop, then submit it again.",
-      "error",
-    );
-    return;
-  }
-
-  const payload = {
-    name: String(formData.get("name")).trim(),
-    loop_title: String(formData.get("loop_title")).trim(),
-    loop_type: String(formData.get("loop_type")).trim(),
-    instructions: String(formData.get("instructions")).trim(),
-  };
-
-  const email = optionalValue(formData, "email");
-  const whyItWorks = optionalValue(formData, "why_it_works");
-  const sourceUrl = optionalValue(formData, "source_url");
-
-  if (email) {
-    payload.email = email;
-  }
-
-  if (whyItWorks) {
-    payload.why_it_works = whyItWorks;
-  }
-
-  if (sourceUrl) {
-    payload.source_url = sourceUrl;
-  }
-
-  submitButton.disabled = true;
-  submitButtonLabel.textContent = "Sending";
-
-  try {
-    const response = await fetch("./.herenow/data/suggestions", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "Idempotency-Key": idempotencyKey,
-      },
-      body: JSON.stringify(payload),
-    });
-
-    let responseBody = {};
-    try {
-      responseBody = await response.json();
-    } catch {
-      responseBody = {};
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      setFormStatus("Complete the required fields before submitting.", "error");
+      return;
     }
 
-    if (!response.ok) {
-      if (response.status === 429) {
+    const formData = new FormData(form);
+    const honeypot = String(formData.get("company") || "").trim();
+
+    if (honeypot) {
+      form.reset();
+      setFormStatus("Thanks. Your suggestion is in review.", "success");
+      return;
+    }
+
+    if (performance.now() - formStartedAt < 1200) {
+      setFormStatus(
+        "Take a moment to review the loop, then submit it again.",
+        "error",
+      );
+      return;
+    }
+
+    const payload = {
+      name: String(formData.get("name")).trim(),
+      loop_title: String(formData.get("loop_title")).trim(),
+      loop_type: String(formData.get("loop_type")).trim(),
+      instructions: String(formData.get("instructions")).trim(),
+    };
+
+    const email = optionalValue(formData, "email");
+    const whyItWorks = optionalValue(formData, "why_it_works");
+    const sourceUrl = optionalValue(formData, "source_url");
+
+    if (email) {
+      payload.email = email;
+    }
+
+    if (whyItWorks) {
+      payload.why_it_works = whyItWorks;
+    }
+
+    if (sourceUrl) {
+      payload.source_url = sourceUrl;
+    }
+
+    submitButton.disabled = true;
+    submitButtonLabel.textContent = "Sending";
+
+    try {
+      const response = await fetch("./.herenow/data/suggestions", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "Idempotency-Key": idempotencyKey,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      let responseBody = {};
+      try {
+        responseBody = await response.json();
+      } catch {
+        responseBody = {};
+      }
+
+      if (!response.ok) {
+        if (response.status === 429) {
+          throw new Error(
+            "This connection has reached the submission limit. Try again later.",
+          );
+        }
+
         throw new Error(
-          "This connection has reached the submission limit. Try again later.",
+          responseBody.message ||
+            responseBody.error ||
+            "The suggestion could not be submitted.",
         );
       }
 
-      throw new Error(
-        responseBody.message ||
-          responseBody.error ||
-          "The suggestion could not be submitted.",
+      form.reset();
+      document.querySelectorAll("textarea[maxlength]").forEach((textarea) => {
+        textarea.dispatchEvent(new Event("input"));
+      });
+      setFormStatus(
+        "Received. The loop is now in the private review queue.",
+        "success",
       );
+      idempotencyKey = makeIdempotencyKey();
+      formStartedAt = performance.now();
+    } catch (error) {
+      setFormStatus(
+        error.message || "Something went wrong. Try again in a moment.",
+        "error",
+      );
+    } finally {
+      submitButton.disabled = false;
+      submitButtonLabel.textContent = "Send for review";
     }
-
-    form.reset();
-    document.querySelectorAll("textarea[maxlength]").forEach((textarea) => {
-      textarea.dispatchEvent(new Event("input"));
-    });
-    setFormStatus(
-      "Received. The loop is now in the private review queue.",
-      "success",
-    );
-    idempotencyKey = makeIdempotencyKey();
-    formStartedAt = performance.now();
-  } catch (error) {
-    setFormStatus(
-      error.message || "Something went wrong. Try again in a moment.",
-      "error",
-    );
-  } finally {
-    submitButton.disabled = false;
-    submitButtonLabel.textContent = "Send for review";
-  }
-});
+  });
+}
