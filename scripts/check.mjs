@@ -202,7 +202,7 @@ assert(html.includes('id="weekly-form"'));
 assert(html.includes("One useful loop, once a week."));
 assert(html.includes("Notify me weekly"));
 assert(html.includes('name="loop-library-form-api"'));
-assert(html.includes("https://loop-library-forms.forwardfuture.ai"));
+assert(html.includes("https://loop-library-forms.mberman84.workers.dev"));
 assert(html.includes('id="weekly-turnstile"'));
 assert(html.includes('id="loop-turnstile"'));
 assert.equal((html.match(/type="submit" disabled/g) || []).length, 2);
@@ -276,12 +276,8 @@ assert(workerSource.includes("reserveFingerprint"));
 assert(workerSource.includes("Authorization: `Bearer ${env.HERENOW_API_KEY}`"));
 assert(workerSource.includes("export class FormGuard"));
 assert.equal(wranglerConfig.name, "loop-library-forms");
-assert.equal(wranglerConfig.workers_dev, false);
-assert.equal(
-  wranglerConfig.routes[0].pattern,
-  "loop-library-forms.forwardfuture.ai",
-);
-assert.equal(wranglerConfig.routes[0].custom_domain, true);
+assert.equal(wranglerConfig.workers_dev, true);
+assert.equal(wranglerConfig.routes, undefined);
 assert.equal(
   wranglerConfig.durable_objects.bindings[0].class_name,
   "FormGuard",

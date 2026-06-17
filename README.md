@@ -80,7 +80,7 @@ curl -sS "https://here.now/api/v1/publishes/{slug}/data/weekly_signups?limit=50"
 
 Create a Cloudflare Turnstile widget in Managed mode for
 `signals.forwardfuture.ai` and the current backing `*.here.now` hostname. The
-Worker serves at `https://loop-library-forms.forwardfuture.ai`.
+Worker serves at `https://loop-library-forms.mberman84.workers.dev`.
 
 Configure the production Worker from a clean checkout:
 

@@ -7,7 +7,7 @@ import {
 } from "../src/index.js";
 
 const SITE_ORIGIN = "https://signals.forwardfuture.ai";
-const WORKER_ORIGIN = "https://loop-library-forms.forwardfuture.ai";
+const WORKER_ORIGIN = "https://loop-library-forms.mberman84.workers.dev";
 
 class MemoryStorage {
   values = new Map();

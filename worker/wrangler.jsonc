@@ -2,13 +2,7 @@
   "name": "loop-library-forms",
   "main": "src/index.js",
   "compatibility_date": "2026-06-17",
-  "workers_dev": false,
-  "routes": [
-    {
-      "pattern": "loop-library-forms.forwardfuture.ai",
-      "custom_domain": true
-    }
-  ],
+  "workers_dev": true,
   "durable_objects": {
     "bindings": [
       {
