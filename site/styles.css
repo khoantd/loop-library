@@ -837,32 +837,6 @@ code {
   text-transform: uppercase;
 }
 
-.loop-guide {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  margin: 20px 0 0;
-  color: var(--muted);
-  font-size: 0.86rem;
-}
-
-.loop-guide p {
-  margin-bottom: 0;
-}
-
-.loop-guide strong {
-  color: var(--ink);
-}
-
-.loop-guide a {
-  color: var(--ink);
-  font-weight: 800;
-  text-decoration-color: var(--orange);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 4px;
-}
-
 .newsletter-section {
   padding: 32px 0;
   border-top: 1px solid var(--ink);
@@ -1665,12 +1639,6 @@ code {
   .results-line span,
   .results-line time {
     display: none;
-  }
-
-  .loop-guide {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 10px;
   }
 
   .loop-table,
