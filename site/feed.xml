@@ -230,4 +230,26 @@
     </author>
     <summary>A scheduled loop-engineering workflow that runs a coding agent in an isolated worktree and requires a second agent to verify staged output before anything ships.</summary>
   </entry>
+  <entry>
+    <title>The Boeing 747 benchmark</title>
+    <id>https://signals.forwardfuture.ai/loop-library/loops/boeing-747-benchmark/</id>
+    <link href="https://signals.forwardfuture.ai/loop-library/loops/boeing-747-benchmark/" />
+    <published>2026-06-18T00:00:00-07:00</published>
+    <updated>2026-06-18T00:00:00-07:00</updated>
+    <author>
+      <name>@victormustar</name>
+    </author>
+    <summary>A vision-guided Three.js workflow that builds, inspects, and improves a Boeing 747 from repeatable camera angles until the agent is 100% satisfied.</summary>
+  </entry>
+  <entry>
+    <title>War Loops: Autonomous Frontend Designer</title>
+    <id>https://signals.forwardfuture.ai/loop-library/loops/war-loops-frontend-designer/</id>
+    <link href="https://signals.forwardfuture.ai/loop-library/loops/war-loops-frontend-designer/" />
+    <published>2026-06-18T00:00:00-07:00</published>
+    <updated>2026-06-18T00:00:00-07:00</updated>
+    <author>
+      <name>Swayam</name>
+    </author>
+    <summary>A judge-gated frontend workflow that captures a reference, builds static and moving versions, measures fidelity, and surgically repairs the weakest gaps.</summary>
+  </entry>
 </feed>

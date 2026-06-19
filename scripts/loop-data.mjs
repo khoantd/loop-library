@@ -5,7 +5,7 @@ export const site = {
   description:
     "Practical AI agent workflows for engineering, research, editorial work, evaluation, and operations.",
   updated: "2026-06-18",
-  socialImageVersion: "20260618-3",
+  socialImageVersion: "20260618-4",
   socialImageExtension: "png",
   socialImageMimeType: "image/png",
 };
@@ -757,5 +757,81 @@ export const loops = [
       "autonomous agent workflow",
     ],
     related: ["clodex-adversarial-review-loop", "overnight-docs-sweep"],
+  },
+  {
+    number: "021",
+    slug: "boeing-747-benchmark",
+    title: "The Boeing 747 benchmark",
+    seoTitle: "Boeing 747 Three.js Vision Benchmark | Loop Library",
+    description:
+      "A vision-guided Three.js workflow that builds, inspects, and improves a Boeing 747 from repeatable camera angles until the agent is 100% satisfied.",
+    categoryLabel: "AI visual design workflow",
+    author: "@victormustar",
+    sourceUrl: "https://x.com/victormustar/status/2064449741685968967",
+    published: "2026-06-18",
+    modified: "2026-06-18",
+    prompt:
+      "/goal Create the most realistic Boeing 747 you can using Three.js. Use your vision capabilities to create a self-verifiable system, then enter a loop until you are 100% satisfied with the result. Build a repeatable camera system to inspect the aircraft from every required angle. After each significant change, render those same views, identify what looks least realistic, improve it, and inspect again. Preserve the best version as you iterate, and stop only when you are 100% satisfied that no visible issue remains worth fixing.",
+    verifyTitle: "You are 100% satisfied with the Boeing 747.",
+    verifyDetail:
+      "The camera system shows every required angle, and you cannot identify another visible issue worth improving.",
+    useWhen:
+      "Use this as a visual benchmark for an agent that can build a complex Three.js scene, inspect its own renders, and improve the result through repeated vision feedback.",
+    steps: [
+      "Build the first Boeing 747 model in Three.js, starting with the silhouette, proportions, wings, engines, tail, and other major forms.",
+      "Create a repeatable camera system that renders the same required angles after every significant change.",
+      "Use vision to inspect those views, identify the least realistic part of the current build, and improve it without losing stronger work.",
+      "Render and inspect again, preserving the best version until you are 100% satisfied with the complete result.",
+    ],
+    why:
+      "The camera system turns visual judgment into a repeatable feedback loop. Inspecting the same angles after every change makes improvement visible and gives the agent a concrete way to decide when it is fully satisfied.",
+    note:
+      "Choose the required camera angles before the run and preserve the final renders. The contributor's stop condition is 100% satisfaction, so the images should make that judgment reviewable afterward.",
+    keywords: [
+      "Boeing 747 benchmark",
+      "Three.js agent workflow",
+      "vision self-verification",
+      "3D reconstruction loop",
+      "camera inspection system",
+    ],
+    related: ["quality-streak-loop", "full-product-evaluation-loop"],
+  },
+  {
+    number: "022",
+    slug: "war-loops-frontend-designer",
+    title: "War Loops: Autonomous Frontend Designer",
+    seoTitle: "War Loops Autonomous Frontend Designer | Loop Library",
+    description:
+      "A judge-gated frontend workflow that captures a reference, builds static and moving versions, measures fidelity, and surgically repairs the weakest gaps.",
+    categoryLabel: "AI frontend design workflow",
+    author: "Swayam",
+    sourceUrl: "https://github.com/0xtigerclaw/war_loops",
+    published: "2026-06-18",
+    modified: "2026-06-18",
+    prompt:
+      "Point War Loops at a URL or image. Capture the page with a genuine browser, extract a ground-truth design spec, and produce two self-correcting builds: a polished static mirror in Pencil and a moving code build in Forge. Judge each build against the original across static design, experiential motion, and responsive reflow. After each evaluation, use the surgical critic to target the weakest signals. Repair, do not rebuild: keep what already matches and change only the highest-impact gaps. Repeat until the measures say it matches, fidelity passes, progress stagnates, or the source capture is blocked. Return the best build with its spec, renders, scores, findings, and run metrics.",
+    verifyTitle: "The build matches the reference across every measured fidelity axis.",
+    verifyDetail:
+      "Static design, experiential motion, and responsive reflow pass their gates, or the best result stops honestly on stagnation or a blocked capture.",
+    useWhen:
+      "Use this when a frontend must be reconstructed from a URL or image and fidelity needs to be measured across appearance, motion, and responsive behavior instead of judged from one screenshot.",
+    steps: [
+      "Capture the reference with a genuine browser and extract the ground-truth design spec, including layout, tokens, content, motion, and responsive behavior.",
+      "Produce the static Pencil mirror and moving Forge code build from the verified spec.",
+      "Judge the builds across static design, experiential motion, and responsive reflow, then identify the weakest signals.",
+      "Use surgical repair to fix the highest-impact gaps, preserve what already matches, and repeat until a terminal fidelity decision is reached.",
+    ],
+    why:
+      "War Loops separates a page's still appearance from how it moves and reflows. Multiple judges and targeted repairs let the system improve weak dimensions without churning parts that already match.",
+    note:
+      "Confirm authorization to reproduce the reference. If the genuine-browser capture reaches a bot wall, login gate, or wrong page, stop instead of building from a bad source.",
+    keywords: [
+      "War Loops",
+      "autonomous frontend designer",
+      "frontend fidelity",
+      "visual evaluation loop",
+      "responsive motion matching",
+    ],
+    related: ["full-product-evaluation-loop", "sub-50ms-page-load-loop"],
   },
 ];

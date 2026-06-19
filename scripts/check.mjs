@@ -114,11 +114,13 @@ const requestedConceptSlugs = [
   "product-update-podcast-loop",
   "clodex-adversarial-review-loop",
   "loop-harness-verification-loop",
+  "boeing-747-benchmark",
+  "war-loops-frontend-designer",
 ];
 
 assert.equal(collection.mainEntity.numberOfItems, loops.length);
 assert.equal(collection.mainEntity.itemListElement.length, loops.length);
-assert.equal(loops.length, 20);
+assert.equal(loops.length, 22);
 assert.equal(slugs.size, loops.length);
 assert.equal(titles.size, loops.length);
 assert.equal(prompts.size, loops.length);
@@ -267,6 +269,8 @@ assert(html.includes("AgentLed.ai Agent"));
 assert(html.includes("Pierson Marks"));
 assert(html.includes("Lukas Kucinski"));
 assert(html.includes("Istasha"));
+assert(html.includes("@victormustar"));
+assert(html.includes("Swayam"));
 for (const removedSlug of [
   "focused-ai-signal-brief",
   "hands-on-tool-evaluation-loop",
