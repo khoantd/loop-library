@@ -559,6 +559,7 @@ assert.equal(
 assert(learnHtml.includes("../styles.css?v=20260619-learn-page"));
 assert(learnHtml.includes("../script.js?v=20260619-pagination"));
 assert(learnHtml.includes("How agent loops work"));
+assert(learnHtml.includes('<meta name="robots" content="index, follow"'));
 assert(learnHtml.includes("What makes a loop useful"));
 assert(learnHtml.includes("Write the prompt"));
 assert(learnHtml.includes("Run it in your coding agent"));
