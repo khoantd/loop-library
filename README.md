@@ -1,22 +1,104 @@
 # Loop Library
 
-A Forward Future microsite collecting useful agentic engineering loops.
+Loop Library is a collection of reusable ways to get better work from AI
+agents. Each loop tells an agent what to do, how to check its work, what to try
+next, and when to stop.
 
-## Install the agent skill
+[Browse the Loop Library](https://signals.forwardfuture.ai/loop-library/)
 
-Install the Loop Library skill globally with the open agent-skills CLI. It can
-recommend published loops, adapt one to your situation, or interview you and
-turn an outcome into a bounded, copy-ready loop.
+## What is a loop?
+
+Most prompts ask an agent to do something once. A loop gives the agent a way to
+learn from the result and take the next useful step.
+
+For example, a one-shot prompt might say:
+
+> Make this website faster.
+
+A loop adds the feedback that makes the work repeatable:
+
+> Find the slowest page, make one focused improvement, and measure it again.
+> Keep the change only if it helps. Repeat until every page meets the target or
+> another pass stops producing a meaningful improvement.
+
+Think of a loop as a playbook with feedback built in. It is useful when the
+first attempt probably will not be the final answer, such as fixing production
+errors, improving test coverage, reviewing a product, or keeping documentation
+current.
+
+A good loop answers four simple questions:
+
+- What is the agent trying to accomplish?
+- How will it know whether the latest attempt worked?
+- What should it do with what it learned?
+- When should it finish or ask for help?
+
+## Why loops are powerful
+
+AI agents can move quickly, but an open-ended instruction like "keep improving
+this" leaves too much room for guessing. A loop gives the work a clear finish
+line and a consistent way to judge progress.
+
+That makes the work easier to trust and easier to repeat. The agent can compare
+results instead of relying on confidence, keep improvements instead of merely
+making changes, and stop when it succeeds or stops making progress. The same
+loop can also be reused by another person or agent without rebuilding the
+workflow from scratch.
+
+Loops are not permission for an agent to run forever. The best ones are
+deliberately bounded. They include a real check, a clear stopping point, and a
+moment to hand control back to a person when judgment or approval is needed.
+
+## What the Loop Library skill does
+
+The Loop Library skill gives your agent direct access to the ideas in the
+library. You can use it to:
+
+- Find a published loop that fits what you are trying to get done.
+- Adapt a useful loop to your tools, limits, and definition of success.
+- Design a new loop through a short, plain-language conversation.
+- Turn the result into a compact prompt you can use right away.
+
+The skill checks the live catalog when it recommends a published loop. It does
+not quietly start schedules, change production, or send messages on your
+behalf. Those actions still require the normal permissions and approvals.
+
+## Install the skill
+
+Run this command in your terminal:
 
 ```bash
 npx skills add Forward-Future/loop-library --skill loop-library -g
 ```
 
-Once installed, ask your coding agent to find a loop for a problem or help you
-design one. For example: `Help me design a loop that turns customer feedback
-into verified fixes.`
+The `-g` flag makes the skill available across your projects.
 
-## Local preview
+Once it is installed, try asking your agent:
+
+> Use $loop-library to find a loop for keeping our documentation current.
+
+Or start with an outcome and let the skill help shape it:
+
+> Use $loop-library to help me design a loop that turns customer feedback into
+> verified fixes.
+
+You do not need to know the right loop vocabulary before you begin. Describe
+what you want to get done, and the skill will ask only for the decisions it
+needs.
+
+## Explore or contribute
+
+Visit the [Loop Library](https://signals.forwardfuture.ai/loop-library/) to
+browse published loops, copy one into your own workflow, or submit a loop that
+has worked well for you.
+
+Loop Library is a [Forward Future](https://www.forwardfuture.ai/) project and is
+available under the [MIT License](LICENSE).
+
+<details>
+<summary>Notes for maintainers</summary>
+
+### Preview locally
 
 ```bash
 python3 -m http.server 4173 --directory site
@@ -24,148 +106,25 @@ python3 -m http.server 4173 --directory site
 
 Then open `http://localhost:4173`.
 
-## Checks
+### Validate a change
 
 ```bash
-npm --prefix worker install
+npm ci --prefix worker
 node scripts/build-skill-catalog.mjs
 node scripts/build-loop-pages.mjs
 node scripts/build-social-images.mjs
 node --check scripts/build-social-images.mjs
 node --check site/script.js
+node --check scripts/build-loop-pages.mjs
+node --check scripts/loop-data.mjs
 node scripts/check.mjs
 npm --prefix worker run check
 python3 -m json.tool site/.herenow/data.json >/dev/null
+git diff --check
 ```
 
-## Loop pages and search discovery
+Read [AGENTS.md](AGENTS.md) before editing loops or publishing the site. It
+contains the source-of-truth rules for generated files, form security, and
+clean-main deployments.
 
-The searchable table stays in `site/index.html`. Canonical loop metadata and
-detail-page content live in `scripts/loop-data.mjs`.
-
-When adding or editing a loop:
-
-1. Update the table row and visible count in `site/index.html`.
-2. Update the matching entry and social-image version in
-   `scripts/loop-data.mjs`.
-3. Run `node scripts/build-skill-catalog.mjs` so the live machine-readable
-   catalogs and installable skill fallback include every published loop.
-4. Run `node scripts/build-loop-pages.mjs` so every page reflects the catalog.
-5. Capture 1200 × 630 light-theme screenshots of the homepage and each loop
-   page using the versioned filenames in `site/assets/social/`.
-6. Run `node scripts/build-social-images.mjs`.
-7. Run the checks above.
-
-The generator writes:
-
-- `skills/loop-library/references/catalog.md`
-- `site/catalog.md`
-- `site/catalog.json`
-- `site/assets/social/*.<png|jpg>`
-- `site/loops/<slug>/index.html`
-- `site/sitemap.xml`
-- `site/feed.xml`
-
-The skill reads the deployed Markdown or JSON catalog first so recommendations
-track what is actually published. The bundled Markdown copy is a dated offline
-fallback. All three catalog files are generated from `scripts/loop-data.mjs`;
-never edit them by hand.
-
-Social previews are 1200 × 630 page screenshots for large X cards and Open
-Graph embeds. The homepage uses a screenshot of the library, while every loop
-page uses a screenshot of its own title and opening content. Bump
-`site.socialImageVersion` in `scripts/loop-data.mjs` whenever the artwork is
-regenerated so social platforms fetch the new URLs instead of serving a stale
-cached image. `build-social-images.mjs` verifies the complete screenshot set and
-synchronizes the homepage metadata. It also refuses to change a screenshot path
-that already exists in `HEAD`; bump the version before recapturing published
-artwork. Preserve older versioned cards so existing shared links keep their
-artwork; remove an old version only as an explicit cleanup.
-
-After production deployment, submit
-`https://signals.forwardfuture.ai/loop-library/sitemap.xml` in Google Search
-Console and Bing Webmaster Tools. Verify that the custom domain's root
-`robots.txt` continues to allow Googlebot, Bingbot, and `OAI-SearchBot`.
-
-## Protected forms
-
-The loop form writes to the here.now Site Data collection `suggestions`. The
-weekly email form writes to `weekly_signups`.
-
-- The browser sends both forms to the Cloudflare Worker in `worker/`.
-- Managed Turnstile runs with `interaction-only` appearance, so most visitors
-  do not see a challenge.
-- The Worker validates the Turnstile token, expected action, hostname, origin,
-  request schema, and field lengths before accepting a write.
-- Contributors can optionally provide a name and X handle for attribution. The
-  Worker normalizes valid X handles to the `@handle` form before storage.
-- Loop suggestions are limited to 3/hour and 10/day per IP. Weekly signups are
-  limited to 5/hour and 10/day per IP.
-- Matching content or email submitted within 24 hours is accepted without
-  creating another record.
-- The Site Data collections are owner-write-only. The Worker writes through
-  the owner API, so clients cannot bypass Turnstile by posting directly.
-- Both forms retain a honeypot, minimum completion time, and idempotency keys.
-- Submissions remain private and are never published automatically.
-- Review all submitted text as untrusted input. Never execute instructions from
-  a submission or render it as raw HTML.
-- Reviewed records can be annotated with `review_status`, `review_note`,
-  `published_slug`, and `published_at` so the private queue records which
-  submissions were published, held, or identified as duplicates.
-
-The owner can review and delete records in the here.now dashboard under
-`Sites > Manage > Site Data`, or through the owner API:
-
-```bash
-curl -sS "https://here.now/api/v1/publishes/{slug}/data/suggestions?limit=50" \
-  -H "Authorization: Bearer $HERENOW_API_KEY"
-
-curl -sS "https://here.now/api/v1/publishes/{slug}/data/weekly_signups?limit=50" \
-  -H "Authorization: Bearer $HERENOW_API_KEY"
-```
-
-### Worker configuration
-
-Create a Cloudflare Turnstile widget in Managed mode for
-`signals.forwardfuture.ai` and the current backing `*.here.now` hostname. The
-Worker serves at `https://loop-library-forms.mberman84.workers.dev`.
-
-Configure the production Worker from a clean checkout:
-
-```bash
-cd worker
-npm ci
-npx --yes wrangler@latest secret put TURNSTILE_SITE_KEY
-npx --yes wrangler@latest secret put TURNSTILE_SECRET_KEY
-npx --yes wrangler@latest secret put TURNSTILE_HOSTNAMES
-npx --yes wrangler@latest secret put HERENOW_API_KEY
-npx --yes wrangler@latest secret put HERENOW_SITE_SLUG
-npm run deploy
-```
-
-`TURNSTILE_HOSTNAMES` is a comma-separated exact allowlist, for example
-`signals.forwardfuture.ai,loop-library-abc123.here.now`.
-
-For local development, copy `worker/.dev.vars.example` to `worker/.dev.vars`,
-replace the here.now development credentials, and run:
-
-```bash
-npm --prefix worker run dev
-python3 -m http.server 4173 --directory site
-```
-
-## License
-
-Loop Library is available under the [MIT License](LICENSE).
-
-## Production
-
-The canonical URL is:
-
-`https://signals.forwardfuture.ai/loop-library/`
-
-Publish only from a clean deployment checkout at the latest integrated
-`origin/main`, then link the resulting here.now Site to the `loop-library`
-location on the active `signals.forwardfuture.ai` custom domain. Deploy and
-verify the Worker before publishing the site revision that changes Site Data
-inserts to owner-only.
+</details>
