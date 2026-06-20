@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Design a bounded AI agent loop step by step, then copy the prompt or send it to the Loop Library review queue."
+    />
+    <meta name="theme-color" content="#faf8f7" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="robots" content="index, follow" />
+    <script>
+      (() => {
+        const storageKey = "loop-library-theme";
+        let storedTheme;
+
+        try {
+          storedTheme = window.localStorage.getItem(storageKey);
+        } catch {
+          storedTheme = null;
+        }
+
+        const theme =
+          storedTheme === "light" || storedTheme === "dark"
+            ? storedTheme
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+
+        document.documentElement.dataset.theme = theme;
+        document
+          .querySelector('meta[name="theme-color"]')
+          .setAttribute("content", theme === "dark" ? "#101010" : "#faf8f7");
+      })();
+    </script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Create a Loop | Loop Library" />
+    <meta
+      property="og:description"
+      content="Answer a few plain-language questions and get a copy-ready agent loop with a clear check and stop rule."
+    />
+    <meta
+      property="og:url"
+      content="https://signals.forwardfuture.ai/loop-library/create/"
+    />
+    <meta
+      property="og:image"
+      content="https://signals.forwardfuture.ai/loop-library/assets/ff-mark.png"
+    />
+    <link
+      rel="canonical"
+      href="https://signals.forwardfuture.ai/loop-library/create/"
+    />
+    <link rel="icon" type="image/png" href="../assets/favicon.png" />
+    <link rel="stylesheet" href="../styles.css?v=20260620-create-ux" />
+    <script src="../script.js?v=20260620-create-ux" defer></script>
+    <script type="module" src="../create-loop.mjs?v=20260620-create-ux"></script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Loop Library loop builder",
+        "description": "A guided workflow for designing bounded AI agent loops with explicit checks and stop rules.",
+        "url": "https://signals.forwardfuture.ai/loop-library/create/",
+        "applicationCategory": "DesignApplication",
+        "operatingSystem": "All",
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "Loop Library",
+          "url": "https://signals.forwardfuture.ai/loop-library/"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Forward Future",
+          "url": "https://forwardfuture.ai/"
+        }
+      }
+    </script>
+    <title>Create a Loop | Loop Library</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <a class="brand-lockup" href="../" aria-label="Forward Future Loop Library home">
+        <img
+          class="brand-mark"
+          src="../assets/favicon.png"
+          width="32"
+          height="32"
+          alt=""
+        />
+        <span class="brand-name">Forward Future</span>
+        <span class="brand-product">Loop Library</span>
+      </a>
+
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="../#library">Loops</a>
+        <a href="../learn/">Learn</a>
+        <a href="./" aria-current="page">Create</a>
+        <button
+          class="theme-toggle"
+          id="theme-toggle"
+          type="button"
+          aria-label="Switch to dark mode"
+          aria-pressed="false"
+        >
+          <svg class="theme-icon theme-icon-light" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="3.5"></circle>
+            <path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"></path>
+          </svg>
+          <svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"></path>
+          </svg>
+          <span class="theme-label theme-label-light">Light</span>
+          <span class="theme-label theme-label-dark">Dark</span>
+        </button>
+        <a class="nav-cta" href="../#submit">Submit a loop</a>
+        <a
+          class="here-now-credit here-now-credit--header"
+          data-here-now-credit
+          href="https://here.now/r/signals"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Hosted by here.now"
+        >
+          <img
+            class="here-now-credit__icon"
+            src="../assets/here-now-icon.svg"
+            alt=""
+            aria-hidden="true"
+          />
+          <span class="here-now-credit__text">
+            <small>Hosted by</small>
+            <strong>here.now</strong>
+          </span>
+        </a>
+      </nav>
+    </header>
+
+    <main id="main" class="create-page">
+      <div class="page-width create-layout">
+        <header class="create-header">
+          <p class="eyebrow">Create</p>
+          <h1>Design a loop</h1>
+          <p>
+            Answer a few short questions in plain language. We turn your answers
+            into a bounded prompt with a check and a stop rule.
+          </p>
+          <p class="create-note">
+            This is your draft. It is not published until reviewed.
+          </p>
+        </header>
+
+        <div class="create-workflow">
+          <p
+            class="create-step-meta"
+            id="create-step-meta"
+            aria-live="polite"
+          ></p>
+
+          <ol
+            class="create-progress"
+            id="create-progress"
+            aria-label="Loop design progress"
+          >
+            <li data-progress-step="0"><span>Goal</span></li>
+            <li data-progress-step="1"><span>Trigger</span></li>
+            <li data-progress-step="2"><span>Scope</span></li>
+            <li data-progress-step="3"><span>Verify</span></li>
+            <li data-progress-step="4"><span>Stop</span></li>
+            <li data-progress-step="5"><span>Name</span></li>
+            <li data-progress-step="6"><span>Review</span></li>
+          </ol>
+
+          <form class="create-wizard" id="loop-create-wizard" novalidate>
+          <section
+            class="create-step"
+            data-create-step="goal"
+            aria-labelledby="create-step-goal"
+          >
+            <h2 id="create-step-goal">What would you like the agent to get done?</h2>
+            <p class="create-step-hint">Describe the outcome in plain language.</p>
+            <label class="field">
+              <span class="visually-hidden">Goal</span>
+              <textarea
+                name="goal"
+                rows="4"
+                maxlength="500"
+                required
+                placeholder="Keep documentation aligned with the current codebase."
+              ></textarea>
+            </label>
+          </section>
+
+          <section
+            class="create-step"
+            data-create-step="trigger"
+            aria-labelledby="create-step-trigger"
+            hidden
+          >
+            <h2 id="create-step-trigger">When should it run?</h2>
+            <p class="create-step-hint">
+              On demand, on a schedule, or after something happens.
+            </p>
+            <label class="field">
+              <span class="visually-hidden">Trigger</span>
+              <input
+                name="trigger"
+                type="text"
+                maxlength="300"
+                required
+                placeholder="Whenever a documentation pass is needed."
+              />
+            </label>
+          </section>
+
+          <section
+            class="create-step"
+            data-create-step="scope"
+            aria-labelledby="create-step-scope"
+            hidden
+          >
+            <h2 id="create-step-scope">
+              What can it look at or change? What is off-limits?
+            </h2>
+            <p class="create-step-hint">
+              Name systems, files, or actions the agent may and may not touch.
+            </p>
+            <label class="field">
+              <span class="visually-hidden">Scope</span>
+              <textarea
+                name="scope"
+                rows="4"
+                maxlength="500"
+                required
+                placeholder="Read docs and code in the repository. Ask before changing application logic."
+              ></textarea>
+            </label>
+          </section>
+
+          <section
+            class="create-step"
+            data-create-step="verify"
+            aria-labelledby="create-step-verify"
+            hidden
+          >
+            <h2 id="create-step-verify">How will you know it worked?</h2>
+            <p class="create-step-hint">
+              Tests, benchmarks, rubrics, logs, or a review step you can repeat.
+            </p>
+            <label class="field">
+              <span class="visually-hidden">Verification</span>
+              <textarea
+                name="verify"
+                rows="3"
+                maxlength="400"
+                required
+                placeholder="Commands, links, and examples still work after each update."
+              ></textarea>
+            </label>
+          </section>
+
+          <section
+            class="create-step"
+            data-create-step="stopRule"
+            aria-labelledby="create-step-stop"
+            hidden
+          >
+            <h2 id="create-step-stop">When should it stop or ask you for help?</h2>
+            <p class="create-step-hint">
+              Success, no-op, budget limit, or when approval is required.
+            </p>
+            <label class="field">
+              <span class="visually-hidden">Stop or escalate</span>
+              <textarea
+                name="stopRule"
+                rows="3"
+                maxlength="400"
+                required
+                placeholder="Every doc page is current or no meaningful drift remains."
+              ></textarea>
+            </label>
+          </section>
+
+          <section
+            class="create-step"
+            data-create-step="title"
+            aria-labelledby="create-step-title"
+            hidden
+          >
+            <h2 id="create-step-title">Name this loop</h2>
+            <p class="create-step-hint">
+              Optional. We suggest one from your goal if you leave this blank.
+            </p>
+            <label class="field">
+              <span class="visually-hidden">Loop name</span>
+              <input
+                name="title"
+                type="text"
+                maxlength="120"
+                placeholder="The documentation drift loop"
+              />
+            </label>
+          </section>
+
+          <section
+            class="create-step create-review"
+            data-create-step="review"
+            aria-labelledby="create-step-review"
+            hidden
+          >
+            <h2 id="create-step-review">Your loop draft</h2>
+            <p class="create-note create-note--compact">
+              Copy or submit when ready.
+            </p>
+
+            <p
+              class="create-source-badge"
+              id="create-source-badge"
+              hidden
+            ></p>
+
+            <div class="create-review-card">
+              <p class="eyebrow">Suggested name</p>
+              <h3 id="create-review-title"></h3>
+              <p id="create-review-summary" class="create-review-summary"></p>
+
+              <p class="eyebrow">Prompt</p>
+              <blockquote
+                class="create-review-prompt"
+                id="create-review-prompt"
+              ></blockquote>
+            </div>
+
+            <div class="create-review-actions">
+              <button class="copy-button" type="button" id="create-copy-prompt" hidden>
+                <span>Copy prompt</span>
+              </button>
+              <button
+                class="submit-button"
+                type="button"
+                id="create-use-submit"
+                hidden
+              >
+                <span>Use in submit form</span>
+                <span aria-hidden="true">&rarr;</span>
+              </button>
+              <button
+                class="pagination-button"
+                type="button"
+                id="create-restart"
+                hidden
+              >
+                Start over
+              </button>
+            </div>
+          </section>
+
+          <div class="create-controls">
+            <button
+              class="pagination-button"
+              type="button"
+              id="create-back"
+              disabled
+            >
+              Back
+            </button>
+            <button class="submit-button" type="submit" id="create-next">
+              <span>Continue</span>
+              <span aria-hidden="true">&rarr;</span>
+            </button>
+          </div>
+        </form>
+
+          <details class="create-starter" id="create-starter" open>
+            <summary class="create-starter-summary">
+              <span
+                class="create-starter-summary-main"
+                id="create-starter-summary-text"
+              >
+                Optional: start from a published loop
+              </span>
+              <small
+                class="create-starter-summary-hint"
+                id="create-starter-summary-hint"
+              ></small>
+            </summary>
+
+            <div class="create-starter-body">
+              <div class="create-starter-header">
+                <h2 id="create-starter-title">Start from a published loop</h2>
+                <p id="create-starter-guidance">
+                  Search the library. Fill the wizard from a loop, or copy its
+                  published prompt unchanged.
+                </p>
+              </div>
+
+              <div
+                class="create-starter-selected"
+                id="create-starter-selected"
+                hidden
+              >
+                <p class="create-starter-selected-label">Starting from</p>
+                <p
+                  class="create-starter-selected-title"
+                  id="create-starter-selected-title"
+                ></p>
+                <button
+                  class="create-starter-clear"
+                  type="button"
+                  id="create-starter-clear"
+                >
+                  Clear
+                </button>
+              </div>
+
+              <label class="search-control create-starter-search">
+                <span class="sr-only">Search published loops</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7"></circle>
+                  <path d="m20 20-4-4"></path>
+                </svg>
+                <input
+                  id="create-loop-search"
+                  type="search"
+                  placeholder="Search loops by outcome, category, or keyword"
+                  autocomplete="off"
+                  aria-controls="create-starter-results"
+                  aria-expanded="false"
+                />
+              </label>
+
+              <p
+                class="create-starter-status"
+                id="create-starter-status"
+                role="status"
+                aria-live="polite"
+              ></p>
+
+              <ul
+                class="create-starter-results"
+                id="create-starter-results"
+                role="listbox"
+                aria-label="Published loops"
+                hidden
+              ></ul>
+            </div>
+          </details>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="page-width footer-inner">
+        <p><strong>Forward Future</strong> <span>Make the future legible.</span></p>
+        <div class="footer-actions">
+          <p>
+            <a href="https://forwardfuture.ai/" rel="noopener">forwardfuture.ai</a>
+            <span>&copy; 2026</span>
+          </p>
+          <a
+            class="here-now-credit here-now-credit--footer"
+            data-here-now-credit
+            href="https://here.now/r/signals"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Hosted by here.now"
+          >
+            <img
+              class="here-now-credit__icon"
+              src="../assets/here-now-icon.svg"
+              alt=""
+              aria-hidden="true"
+            />
+            <span class="here-now-credit__text">
+              <small>Hosted by</small>
+              <strong>here.now</strong>
+            </span>
+          </a>
+        </div>
+      </div>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

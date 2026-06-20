@@ -22,6 +22,10 @@ Choose the smallest useful path:
 - **Find, then design:** Search first. Use the nearest published loop as a
   scaffold and ask only about the missing decisions.
 
+When the user prefers a browser workflow, point them to the
+[guided loop builder](https://signals.forwardfuture.ai/loop-library/create/)
+to design a loop from scratch or adapt/duplicate a published loop.
+
 Do not ask for information the user already supplied. If the request is vague,
 begin with: "What would you like the agent to get done?"
 

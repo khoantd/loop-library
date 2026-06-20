@@ -12,6 +12,21 @@ import {
   site as siteMeta,
 } from "./loop-data.mjs";
 import {
+  compileLoopDraft,
+  normalizeField,
+  suggestTitle,
+  validateAnswers,
+  validateStep,
+  WIZARD_STEPS,
+} from "./compile-loop-draft.mjs";
+import {
+  catalogLoopSearchText,
+  catalogLoopToAnswers,
+  catalogLoopToExactDraft,
+  extractStopRuleFromPrompt,
+  extractTriggerFromPrompt,
+} from "./catalog-loop-to-answers.mjs";
+import {
   catalogSchemaVersion,
   renderCatalogJson,
   renderCatalogMarkdown,
@@ -25,8 +40,14 @@ const skillRoot = path.join(root, "skills", "loop-library");
 const [
   html,
   learnHtml,
+  createHtml,
   css,
   script,
+  createLoopScript,
+  compileDraftSource,
+  compileDraftSiteSource,
+  catalogMapperSource,
+  catalogMapperSiteSource,
   dataSource,
   workerSource,
   wranglerSource,
@@ -44,8 +65,14 @@ const [
   await Promise.all([
     readFile(path.join(siteRoot, "index.html"), "utf8"),
     readFile(path.join(siteRoot, "learn", "index.html"), "utf8"),
+    readFile(path.join(siteRoot, "create", "index.html"), "utf8"),
     readFile(path.join(siteRoot, "styles.css"), "utf8"),
     readFile(path.join(siteRoot, "script.js"), "utf8"),
+    readFile(path.join(siteRoot, "create-loop.mjs"), "utf8"),
+    readFile(path.join(root, "scripts", "compile-loop-draft.mjs"), "utf8"),
+    readFile(path.join(siteRoot, "compile-loop-draft.mjs"), "utf8"),
+    readFile(path.join(root, "scripts", "catalog-loop-to-answers.mjs"), "utf8"),
+    readFile(path.join(siteRoot, "catalog-loop-to-answers.mjs"), "utf8"),
     readFile(path.join(siteRoot, ".herenow", "data.json"), "utf8"),
     readFile(path.join(workerRoot, "src", "index.js"), "utf8"),
     readFile(path.join(workerRoot, "wrangler.jsonc"), "utf8"),
@@ -553,7 +580,7 @@ assert(!html.includes('class="cell-type"'));
 assert(!html.includes("type-badge"));
 assert(!html.includes('<th scope="col">Type</th>'));
 assert(html.includes("./styles.css?v=20260619-show-more"));
-assert(html.includes("./script.js?v=20260619-no-numbering"));
+assert(html.includes("./script.js?v=20260620-create"));
 assert(html.includes('href="./learn/"'));
 assert(!html.includes('class="loop-guide"'));
 assert(!html.includes("A useful loop specifies:"));
@@ -818,5 +845,139 @@ assert.equal(weeklySignups.rateLimit, "5/hour/ip");
 assert.equal(weeklySignups.fields.email.type, "email");
 assert.equal(weeklySignups.fields.email.required, true);
 assert(weeklySignups.fields.email.maxLength <= 160);
+
+assert.equal(
+  createHash("sha256").update(compileDraftSource).digest("hex"),
+  createHash("sha256").update(compileDraftSiteSource).digest("hex"),
+);
+assert.equal(
+  createHash("sha256").update(catalogMapperSource).digest("hex"),
+  createHash("sha256").update(catalogMapperSiteSource).digest("hex"),
+);
+
+assert.equal(WIZARD_STEPS.length, 6);
+assert.equal(WIZARD_STEPS[0].id, "goal");
+assert.equal(WIZARD_STEPS.at(-1).id, "title");
+
+assert.equal(normalizeField("  hello   world  "), "hello world");
+assert.equal(validateStep("goal", { goal: "" }).valid, false);
+assert.equal(validateStep("title", { title: "" }).valid, true);
+assert.equal(
+  validateStep("goal", { goal: "x".repeat(501) }).valid,
+  false,
+);
+assert.equal(validateAnswers({ goal: "Keep docs current" }).valid, false);
+
+const compiled = compileLoopDraft({
+  goal: "keep documentation aligned with the codebase",
+  trigger: "whenever a documentation pass is needed",
+  scope: "read docs and code in the repository; ask before changing application logic",
+  verify: "commands, links, and examples still work",
+  stopRule: "every doc page is current or no meaningful drift remains",
+});
+
+assert(compiled.title.includes("documentation"));
+assert(compiled.prompt.includes("documentation pass is needed"));
+assert(compiled.prompt.includes("After each meaningful attempt"));
+assert(compiled.prompt.includes("Stop when"));
+assert(compiled.prompt.includes("Ask before destructive"));
+assert.equal(suggestTitle("keep documentation aligned"), "The Keep documentation aligned loop");
+
+const sampleLoop = loops[0];
+const adapted = catalogLoopToAnswers({
+  slug: sampleLoop.slug,
+  title: sampleLoop.title,
+  useWhen: sampleLoop.useWhen,
+  prompt: sampleLoop.prompt,
+  description: sampleLoop.description,
+  steps: sampleLoop.steps,
+  verification: {
+    title: sampleLoop.verifyTitle,
+    detail: sampleLoop.verifyDetail,
+  },
+  note: sampleLoop.note,
+});
+
+assert.equal(adapted.sourceSlug, sampleLoop.slug);
+assert(adapted.goal.length > 0);
+assert(adapted.trigger.length > 0);
+assert(adapted.scope.length > 0);
+assert(adapted.verify.length > 0);
+assert(adapted.stopRule.length > 0);
+assert.equal(
+  extractTriggerFromPrompt(
+    "Whenever a documentation pass is needed, review the codebase.",
+  ),
+  "Whenever a documentation pass is needed.",
+);
+assert.equal(
+  extractStopRuleFromPrompt("Continue until every page meets the threshold."),
+  "every page meets the threshold",
+);
+assert(
+  catalogLoopSearchText({
+    title: "Docs sweep",
+    description: "Documentation drift",
+    keywords: ["audit"],
+  }).includes("documentation drift"),
+);
+
+const exact = catalogLoopToExactDraft({
+  slug: "demo-loop",
+  title: "The docs sweep",
+  prompt: "Whenever a documentation pass is needed, open a pull request.",
+  description: "Keeps docs current.",
+  useWhen: "Use this when docs drift.",
+  verification: { title: "Docs match code.", detail: "Open a PR." },
+  steps: ["Compare docs with code."],
+});
+
+assert.equal(exact.prompt, "Whenever a documentation pass is needed, open a pull request.");
+assert(exact.title.endsWith("(copy)"));
+assert.equal(exact.answers.sourcePrompt, exact.prompt);
+
+assert(createHtml.includes('id="create-starter"'));
+assert(createHtml.includes('id="create-loop-search"'));
+assert(createHtml.includes('id="create-starter-results"'));
+assert(createHtml.includes('id="create-source-badge"'));
+assert(createHtml.includes('id="create-step-meta"'));
+assert(createHtml.includes('class="create-workflow"'));
+assert(createHtml.includes("<details class=\"create-starter\""));
+assert(createHtml.includes("Start from a published loop"));
+assert(createHtml.includes("Copy or submit when ready."));
+assert(createHtml.includes('application/ld+json'));
+assert(createHtml.includes("Loop Library loop builder"));
+assert(createHtml.includes('id="create-use-submit"'));
+assert(createHtml.includes("This is your draft. It is not published until reviewed."));
+assert(createHtml.includes('href="./" aria-current="page"'));
+assert(createHtml.includes("../styles.css?v=20260620-create-ux"));
+assert(createHtml.includes("../script.js?v=20260620-create-ux"));
+assert(createHtml.includes("../create-loop.mjs?v=20260620-create-ux"));
+assert(createHtml.includes('data-create-step="review"'));
+assert(createLoopScript.includes("catalogLoopToAnswers"));
+assert(createLoopScript.includes("catalogLoopToExactDraft"));
+assert(createLoopScript.includes('fetch("../catalog.json"'));
+assert(createLoopScript.includes("Fill wizard from this loop"));
+assert(createLoopScript.includes("Copy published prompt"));
+assert(createLoopScript.includes("updateStarterPanel"));
+assert(createLoopScript.includes("STARTER_SEARCH_MIN"));
+assert(css.includes(".create-starter"));
+assert(css.includes(".create-starter-action--primary"));
+assert(css.includes(".create-starter-action--secondary"));
+assert(css.includes(".create-step-meta"));
+assert(css.includes(".create-workflow"));
+assert(css.includes(".create-source-badge"));
+assert(html.includes('href="./create/"'));
+assert(html.includes("Design a loop"));
+assert(learnHtml.includes('href="../create/"'));
+assert(learnHtml.includes("guided loop builder"));
+assert(script.includes('SUBMIT_PREFILL_KEY = "loop-library-submit-prefill"'));
+assert(script.includes("applySubmitPrefill()"));
+assert(script.includes('form.querySelector(\'[name="loop_title"]\')'));
+assert(script.includes('form.querySelector(\'[name="instructions"]\')'));
+assert(css.includes(".create-wizard"));
+assert(css.includes(".create-progress"));
+assert(css.includes(".visually-hidden"));
+assert(sitemap.includes(`<loc>${siteMeta.baseUrl}create/</loc>`));
 
 console.log("Loop Library checks passed.");

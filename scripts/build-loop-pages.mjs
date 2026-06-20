@@ -247,6 +247,7 @@ ${structuredData(loop)}
       <nav class="site-nav" aria-label="Primary navigation">
         <a href="../../#library">All loops</a>
         <a href="../../learn/">What is a loop?</a>
+        <a href="../../create/">Create</a>
         <button
           class="theme-toggle"
           id="theme-toggle"
@@ -390,6 +391,10 @@ function renderSitemap() {
     },
     {
       url: `${site.baseUrl}learn/`,
+      modified: site.updated,
+    },
+    {
+      url: `${site.baseUrl}create/`,
       modified: site.updated,
     },
     ...loops.map((loop) => ({

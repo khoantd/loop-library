@@ -772,3 +772,81 @@ if (weeklyForm && weeklyButton && weeklyButtonLabel) {
 }
 
 initializeFormProtection();
+
+const SUBMIT_PREFILL_KEY = "loop-library-submit-prefill";
+
+function readSubmitPrefillFromHash() {
+  const hash = window.location.hash.slice(1);
+
+  if (!hash.startsWith("submit")) {
+    return null;
+  }
+
+  const queryIndex = hash.indexOf("?");
+
+  if (queryIndex === -1) {
+    return null;
+  }
+
+  const params = new URLSearchParams(hash.slice(queryIndex + 1));
+
+  if (params.get("prefill") !== "1") {
+    return null;
+  }
+
+  return {
+    loop_title: params.get("loop_title") || "",
+    instructions: params.get("instructions") || "",
+  };
+}
+
+function applySubmitPrefill() {
+  const form = document.querySelector("#loop-form");
+
+  if (!form) {
+    return;
+  }
+
+  let prefill = null;
+
+  try {
+    const stored = window.sessionStorage.getItem(SUBMIT_PREFILL_KEY);
+
+    if (stored) {
+      prefill = JSON.parse(stored);
+      window.sessionStorage.removeItem(SUBMIT_PREFILL_KEY);
+    }
+  } catch {
+    prefill = null;
+  }
+
+  if (!prefill) {
+    prefill = readSubmitPrefillFromHash();
+  }
+
+  if (!prefill?.loop_title && !prefill?.instructions) {
+    return;
+  }
+
+  const titleInput = form.querySelector('[name="loop_title"]');
+  const instructionsInput = form.querySelector('[name="instructions"]');
+
+  if (titleInput && prefill.loop_title) {
+    titleInput.value = prefill.loop_title;
+  }
+
+  if (instructionsInput && prefill.instructions) {
+    instructionsInput.value = prefill.instructions;
+  }
+
+  const submitSection = document.querySelector("#submit");
+
+  if (submitSection) {
+    window.requestAnimationFrame(() => {
+      submitSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      titleInput?.focus({ preventScroll: true });
+    });
+  }
+}
+
+applySubmitPrefill();
