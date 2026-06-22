@@ -25,7 +25,7 @@ Use codegraph for **structural** questions — what calls what, what would break
 | "See several related symbols' source at once" | `codegraph_explore` |
 | "What files exist under path/" | `codegraph_files` |
 | "Is the index healthy?" | `codegraph_status` |
-| Visual exploration of a subgraph in browser | `npx @royalsolution/ontosight@0.2.0` (see **`.agent/rules/ontosight.md`**) |
+| Visual exploration of a subgraph in browser | `royalsolution-ontosight` (see **`.agent/rules/ontosight.md`**) |
 | "Show/demonstrate impact of changing Z" | `codegraph_impact` → then OntoSight `--symbol Z` (see **`.agent/rules/ontosight.md`**) |
 
 ### Visualization

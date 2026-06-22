@@ -6,7 +6,7 @@
 - **Never** hardcode secrets, API keys, passwords, or tokens in source code
 - **Never** commit `.env` files to version control
 - **Never** log sensitive data (passwords, tokens, PII)
-- **Never** use `eval()` or `Function()` with user input
+- **Never** use dynamic code execution (e.g. JS `eval` / `new Function`) with user input
 - **Always** validate and sanitize all user inputs
 
 ## Environment Variables

@@ -88,9 +88,13 @@ Stop on failure; do not publish.
 
 ### 7. Publish
 
+Local publish (provenance requires GitHub Actions OIDC — see README):
+
 ```bash
-npm publish --access public
+npm publish --access public --provenance=false
 ```
+
+Or: `npm run publish:local`
 
 If npm prompts for **OTP**, the maintainer enters it in the terminal.
 
@@ -114,6 +118,6 @@ Tell the maintainer:
 | Bump | `npm version patch --no-git-tag-version` |
 | README | `npm run release:readme -- --version … --notes-file …` |
 | Test | `npm run test:cli` |
-| Publish | `npm publish --access public` |
+| Publish | `npm run publish:local` (or `npm publish --access public --provenance=false`) |
 
 See also [README — Publishing to npm](../../README.md#publishing-to-npm-maintainers) and [README — Release notes](../../README.md#release-notes).

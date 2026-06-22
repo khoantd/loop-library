@@ -21,7 +21,7 @@ Systematically scan the codebase for security vulnerabilities and produce a prio
   git log --all --full-history -- .env
   ```
 - [ ] SQL injection via string concatenation
-- [ ] `eval()` or `new Function()` with user input
+- [ ] Dynamic code execution (e.g. JS `eval` / `new Function`) with user input
 
 ### 🟡 High Priority
 - [ ] Missing authentication on protected routes

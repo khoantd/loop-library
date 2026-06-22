@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFile, readdir } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import path from "node:path";
 
 import {
@@ -979,5 +979,42 @@ assert(css.includes(".create-wizard"));
 assert(css.includes(".create-progress"));
 assert(css.includes(".visually-hidden"));
 assert(sitemap.includes(`<loc>${siteMeta.baseUrl}create/</loc>`));
+
+const cliDataCatalogPath = path.join(root, "data", "catalog.json");
+const cliLibFiles = ["catalog-loop-to-answers.mjs", "compile-loop-draft.mjs"];
+
+const [cliDataCatalogSource, ...cliLibSources] = await Promise.all([
+  readFile(cliDataCatalogPath, "utf8"),
+  ...cliLibFiles.map((file) =>
+    readFile(path.join(root, "src", "lib", file), "utf8"),
+  ),
+]);
+
+assert.equal(cliDataCatalogSource, publicCatalogJsonSource);
+
+for (const [index, file] of cliLibFiles.entries()) {
+  const scriptSource = index === 0 ? catalogMapperSource : compileDraftSource;
+  assert.equal(
+    cliLibSources[index],
+    scriptSource,
+    `CLI lib drift: src/lib/${file} must match scripts/${file}`,
+  );
+}
+
+const { recommendLoops: cliRecommendLoops } = await import(
+  pathToFileURL(path.join(root, "src", "search.mjs")).href
+);
+const cliRecommendPayload = cliRecommendLoops(
+  publicCatalog.loops,
+  "documentation drift",
+);
+const cliRecommendSlugs = cliRecommendPayload.recommendations.map(
+  (item) => item.slug,
+);
+
+assert.ok(
+  cliRecommendSlugs.includes("overnight-docs-sweep"),
+  "CLI recommend should surface overnight-docs-sweep for documentation drift",
+);
 
 console.log("Loop Library checks passed.");

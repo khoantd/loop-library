@@ -30,7 +30,7 @@ Supporting workflows: `debug`, `simplify`, `fix-issue`, `handoff`, `resume`, `un
 - Prefer **tests first** and **small vertical slices** (see `.agents/skills/incremental-implementation/`).
 - Use **`.agents/references/`** for checklists (security, testing, performance, accessibility).
 - For **structural** code questions, prefer **CodeGraph** MCP tools per **`.agent/rules/codegraph.md`**.
-- When the user wants a **visual call graph**, use **OntoSight CLI** per **`.agent/rules/ontosight.md`** (`npx @royalsolution/ontosight@0.2.0`).
+- When the user wants a **visual call graph**, use **OntoSight CLI** per **`.agent/rules/ontosight.md`** (`royalsolution-ontosight`).
 - For **UI/UX work** (design, build, review, fix, improve — components, pages, layouts, styling, accessibility), read and follow the **ui-ux-pro-max** skill per **`.agent/rules/ui-ux-pro-max.md`**.
 
 ## Agents (personas)

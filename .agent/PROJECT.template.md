@@ -42,7 +42,7 @@ _Languages, frameworks, and major dependencies._
 |------|--------|
 | CodeGraph index | _`.codegraph/` present \| missing — run `npx @colbymchenry/codegraph init -i`_ |
 | Workspace root | _absolute path for MCP/OntoSight_ |
-| OntoSight | _optional — `npx @royalsolution/ontosight@0.2.0 "<workspace-root>"`_ |
+| OntoSight | _optional — `royalsolution-ontosight "<workspace-root>"`_ |
 
 ## Notes
 

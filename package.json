@@ -1,0 +1,44 @@
+{
+  "name": "loop-library",
+  "version": "0.1.0",
+  "description": "npm CLI for AI agents to recommend published loops from the Loop Library — fast JSON shortlist, offline catalog, zero dependencies.",
+  "type": "module",
+  "bin": {
+    "loop-library": "./bin/loop-library.mjs"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "data/catalog.json"
+  ],
+  "scripts": {
+    "build:catalog": "node scripts/build-skill-catalog.mjs",
+    "sync:lib": "node scripts/sync-cli-lib.mjs",
+    "sync:catalog": "cp site/catalog.json data/catalog.json",
+    "prepack": "npm run build:catalog && npm run sync:catalog && npm run sync:lib",
+    "test:cli": "node --test test/cli.test.mjs",
+    "check": "node scripts/check.mjs && npm run test:cli"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "loop",
+    "workflow",
+    "cli",
+    "loop-library",
+    "agent-workflow",
+    "prompt"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khoantd/loop-library.git"
+  },
+  "homepage": "https://signals.forwardfuture.ai/loop-library/",
+  "bugs": {
+    "url": "https://github.com/khoantd/loop-library/issues"
+  }
+}

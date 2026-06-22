@@ -46,7 +46,7 @@ Use for: summary-before-graph; tell the user what OntoSight is loading and what 
 
 ## Chat summary template
 
-Present this **before** running `npx @royalsolution/ontosight@0.2.0` (with absolute workspace root as `[project-path]`):
+Present this **before** running `npx royalsolution-ontosight@0.2.1` (with absolute workspace root as `[project-path]`):
 
 ### 1. Seed
 
@@ -74,7 +74,7 @@ Group by risk: **direct callers** (highest) vs **transitive** (lower).
 Short line: *"Opening interactive impact graph…"* then run (replace `<workspace-root>` with absolute workspace path):
 
 ```bash
-npx @royalsolution/ontosight@0.2.0 "<workspace-root>" --symbol <name> --path <dir-from-search> --hops 3 --max-nodes 200
+npx royalsolution-ontosight@0.2.1 "<workspace-root>" --symbol <name> --path <dir-from-search> --hops 3 --max-nodes 200
 ```
 
 ---
@@ -96,7 +96,7 @@ npx @royalsolution/ontosight@0.2.0 "<workspace-root>" --symbol <name> --path <di
 3. Read this file (IMPACT-DEMO.md)
 4. Optional: ui-ux-pro-max chart/ux searches above
 5. Chat summary (template sections 1–3)
-6. npx @royalsolution/ontosight@0.2.0 "<workspace-root>" --symbol <name> --path <dir> --hops 3 --max-nodes 200
+6. npx royalsolution-ontosight@0.2.1 "<workspace-root>" --symbol <name> --path <dir> --hops 3 --max-nodes 200
 ```
 
 See **`.agents/references/ontosight.md`** for flags and troubleshooting.

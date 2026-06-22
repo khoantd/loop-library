@@ -87,7 +87,7 @@ If the index is missing, run `npx @colbymchenry/codegraph init -i` in the projec
 
 ## Code visualization (OntoSight)
 
-This project includes **[OntoSight](https://www.npmjs.com/package/@royalsolution/ontosight)** for interactive CodeGraph call subgraphs in the browser.
+This project includes **[OntoSight](https://www.npmjs.com/package/royalsolution-ontosight)** for interactive CodeGraph call subgraphs in the browser.
 
 | Item | Location |
 |------|----------|
@@ -95,7 +95,7 @@ This project includes **[OntoSight](https://www.npmjs.com/package/@royalsolution
 | Setup reference | `.cursor/references/ontosight.md` |
 | Shared index | `.codegraph/` (same as CodeGraph) |
 
-Use `codegraph_*` MCP tools to gather structural facts in chat; run `npx @royalsolution/ontosight@0.2.0 .` when the user wants a visual call graph. For **impact analysis demos**, follow `skills/ui-ux-pro-max/IMPACT-DEMO.md` (search → `codegraph_impact` → summary → graph). Requires Node 20+, Python 3.11+, and uv or pipx.
+Use `codegraph_*` MCP tools to gather structural facts in chat; run `npx royalsolution-ontosight@0.2.1 "<workspace-root>"` when the user wants a visual call graph. For **impact analysis demos**, follow `skills/ui-ux-pro-max/IMPACT-DEMO.md` (search → `codegraph_impact` → summary → graph). Requires Node 20+, Python 3.11+, and uv or pipx.
 
 ---
 
